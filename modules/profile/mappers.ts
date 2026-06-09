@@ -1,0 +1,164 @@
+import {
+  PICKUP_OPTIONS,
+  DROPOFF_OPTIONS,
+} from "@/modules/profile/constants";
+import type {
+  AccountBookingDetail,
+  AccountBookingItem,
+  PassengerPayload,
+  ProfileBooking,
+  ProfileBookingStatus,
+  TrackingStep,
+} from "@/modules/profile/types";
+import { formatIsoDateToDisplay } from "@/shared/utils/date";
+
+const PAYMENT_LABELS: Record<string, string> = {
+  card: "Thẻ tín dụng / ghi nợ",
+  ewallet: "Ví điện tử",
+  bank: "Chuyển khoản ngân hàng",
+  cash: "Tiền mặt",
+};
+
+const resolvePointLabel = (
+  value: string | undefined,
+  options: Array<{ value: string; label: string }>,
+): string => {
+  if (!value) return "—";
+  return options.find((item) => item.value === value)?.label ?? value;
+};
+
+const formatSeatLabel = (item: AccountBookingItem | AccountBookingDetail): string => {
+  const detail = item as AccountBookingDetail;
+
+  if (detail.seats?.length) {
+    return detail.seats.map((seat) => seat.name || seat.code).join(", ");
+  }
+
+  if (item.totalSeat > 1) return `${item.totalSeat} ghế`;
+  if (item.totalSeat === 1) return "1 ghế";
+  return "—";
+};
+
+export const mapBookingStatus = (
+  item: AccountBookingItem,
+  ticketStatus?: string | null,
+): ProfileBookingStatus => {
+  const status = item.status?.toUpperCase() ?? "";
+  const ticket = ticketStatus?.toUpperCase() ?? "";
+
+  if (
+    status === "CANCELLED" ||
+    ticket === "CANCELLED" ||
+    ticket === "REFUNDED"
+  ) {
+    return "Đã hủy";
+  }
+
+  if (status === "HOLD") return "Chưa thanh toán";
+  if (status === "CONFIRMED") return "Đã xác nhận";
+
+  if (
+    status === "PENDING_APPROVAL" ||
+    (status === "CONVERTED" && ticket === "PENDING")
+  ) {
+    return "Chờ xác nhận";
+  }
+
+  if (status === "CONVERTED" && ticket === "PAID") return "Chờ khởi hành";
+
+  return "Chưa thanh toán";
+};
+
+const canEditBooking = (item: AccountBookingItem): boolean => {
+  if (item.status !== "HOLD") return false;
+  const expiresAt = new Date(item.holdExpiresAt);
+  return !Number.isNaN(expiresAt.getTime()) && expiresAt.getTime() > Date.now();
+};
+
+export const mapAccountBookingToProfile = (
+  item: AccountBookingItem | AccountBookingDetail,
+  contactEmail = "",
+): ProfileBooking => {
+  const road = item.schedule?.road;
+  const trip = item.schedule?.trip;
+  const passenger = item.passenger;
+  const ticket = (item as AccountBookingDetail).ticket;
+  const route =
+    road?.startPoint && road?.endPoint
+      ? `${road.startPoint} → ${road.endPoint}`
+      : (trip?.name ?? "—");
+
+  return {
+    id: String(item.id),
+    holdCode: item.code,
+    route,
+    date: formatIsoDateToDisplay(item.createdAt),
+    time: trip?.departure ?? "—",
+    passengerName: passenger?.fullName ?? "—",
+    seat: formatSeatLabel(item),
+    pickup: resolvePointLabel(passenger?.pickupPoint, PICKUP_OPTIONS),
+    dropoff: resolvePointLabel(passenger?.dropoffPoint, DROPOFF_OPTIONS),
+    pickupValue: passenger?.pickupPoint ?? "",
+    dropoffValue: passenger?.dropoffPoint ?? "",
+    paymentMethod:
+      PAYMENT_LABELS[item.paymentMethodId ?? ""] ??
+      item.paymentMethodId ??
+      "—",
+    status: mapBookingStatus(item, ticket?.status ?? null),
+    bookingCode: ticket?.code ?? item.code,
+    contactPhone: passenger?.phone ?? "",
+    contactEmail,
+    note: "",
+    canEdit: canEditBooking(item),
+  };
+};
+
+export const toPassengerPayload = (booking: ProfileBooking): PassengerPayload => ({
+  fullName: booking.passengerName,
+  phone: booking.contactPhone.replace(/\D/g, "").slice(-10),
+  pickupPoint: booking.pickupValue,
+  dropoffPoint: booking.dropoffValue,
+});
+
+export const getTrackingProgress = (status: ProfileBookingStatus): number => {
+  switch (status) {
+    case "Chưa thanh toán":
+      return 20;
+    case "Chờ xác nhận":
+      return 40;
+    case "Đã xác nhận":
+      return 60;
+    case "Chờ khởi hành":
+      return 80;
+    case "Đã hủy":
+      return 0;
+    default:
+      return 0;
+  }
+};
+
+export const buildTrackingSteps = (status: ProfileBookingStatus): TrackingStep[] => {
+  const progress = getTrackingProgress(status);
+  const labels = [
+    "Đã đặt vé",
+    "Đã xác nhận",
+    "Chuẩn bị khởi hành",
+    "Đang di chuyển",
+    "Hoàn thành",
+  ];
+  const thresholds = [20, 40, 60, 80, 100];
+
+  return labels.map((label, index) => {
+    const threshold = thresholds[index];
+    const done = progress >= threshold;
+    const prevThreshold = index === 0 ? 0 : thresholds[index - 1];
+    const active = progress >= prevThreshold && progress < threshold + 20;
+
+    return {
+      key: `step-${index}`,
+      label,
+      done: status === "Đã hủy" ? false : done,
+      active: status === "Đã hủy" ? false : active && !done,
+    };
+  });
+};

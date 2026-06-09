@@ -5,3 +5,13 @@ export function formatDateValue(value: Date): string {
 
   return `${day}/${month}/${year}`;
 }
+
+export function formatIsoDateToDisplay(iso: string): string {
+  const date = new Date(iso);
+
+  if (Number.isNaN(date.getTime())) {
+    return "—";
+  }
+
+  return formatDateValue(date);
+}
