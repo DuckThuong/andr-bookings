@@ -61,7 +61,7 @@ export default function HomeTab() {
 
           <View className="mt-5">
             <AppButton
-              label="Mở tab tìm chuyến"
+              label="Tìm chuyến"
               onPress={() => router.push("/(tabs)/search" as never)}
             />
           </View>

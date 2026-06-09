@@ -1,7 +1,11 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from "react";
-import { login } from "@/modules/auth/api";
+import { login, signUp as signUpRequest } from "@/modules/auth/api";
 import { authStorageService } from "@/modules/auth/storage";
-import type { AuthContextValue, LoginPayload } from "@/modules/auth/types";
+import type {
+  AuthContextValue,
+  LoginPayload,
+  SignUpPayload,
+} from "@/modules/auth/types";
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
@@ -42,6 +46,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
       isHydrated,
       async signIn(payload: LoginPayload) {
         const response = await login(payload);
+        await authStorageService.setAccessToken(response.accessToken);
+      },
+      async signUp(payload: SignUpPayload) {
+        const response = await signUpRequest(payload);
         await authStorageService.setAccessToken(response.accessToken);
       },
       async signOut() {
