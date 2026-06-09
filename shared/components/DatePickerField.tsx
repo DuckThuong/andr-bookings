@@ -27,7 +27,7 @@ export function DatePickerField({
   label,
   value,
   onChange,
-  placeholder = "Select date",
+  placeholder = "Chọn ngày",
   minimumDate,
   error,
   helperText,
@@ -94,11 +94,11 @@ export function DatePickerField({
               <View className="mb-4 flex-row items-center justify-between">
                 <Pressable onPress={close}>
                   <Text className="font-medium text-base text-text_color_4">
-                    Cancel
+                    Hủy
                   </Text>
                 </Pressable>
                 <Text className="font-semibold text-base text-primary_color">
-                  Pick date
+                  Chọn ngày
                 </Text>
                 <Pressable
                   onPress={() => {
@@ -107,7 +107,7 @@ export function DatePickerField({
                   }}
                 >
                   <Text className="font-semibold text-base text-secondary_color">
-                    Done
+                    Xong
                   </Text>
                 </Pressable>
               </View>

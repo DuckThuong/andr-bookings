@@ -26,7 +26,7 @@ export function AuthScreenShell({
           <View className="mb-6">
             <Text className="font-bold text-2xl text-primary_color">Go Ride</Text>
             <Text className="mt-1 text-sm text-text_color_4">
-              Smart bookings for every route
+              Đặt vé thông minh cho mọi hành trình
             </Text>
           </View>
 

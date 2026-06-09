@@ -17,18 +17,18 @@ function resolveBaseUrl() {
       url.hostname === "::1";
 
     if (!isLoopbackHost) {
-      return url.toString();
+      return url.toString().replace(/\/$/, "");
     }
 
     const expoHostUri = Constants.expoConfig?.hostUri;
     const expoHost = expoHostUri?.split(":")[0];
 
     if (!expoHost) {
-      return url.toString();
+      return url.toString().replace(/\/$/, "");
     }
 
     url.hostname = expoHost;
-    return url.toString();
+    return url.toString().replace(/\/$/, "");
   } catch {
     return envBaseUrl;
   }

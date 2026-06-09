@@ -39,7 +39,7 @@ const TabLayout = () => {
               size={24}
             />
           ),
-          tabBarLabel: "Home",
+          tabBarLabel: "Trang chủ",
         }}
       />
 
@@ -59,7 +59,7 @@ const TabLayout = () => {
               size={24}
             />
           ),
-          tabBarLabel: "Search",
+          tabBarLabel: "Tìm kiếm",
         }}
       />
 
@@ -79,7 +79,7 @@ const TabLayout = () => {
               size={24}
             />
           ),
-          tabBarLabel: "Profile",
+          tabBarLabel: "Tài khoản",
         }}
       />
     </Tabs>

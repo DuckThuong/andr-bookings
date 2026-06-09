@@ -32,18 +32,18 @@ export default function HomeTab() {
               Go Ride
             </Text>
             <Text className="mt-2 font-bold text-[28px] leading-9 text-white_color">
-              Book smarter for every trip
+              Đặt vé thông minh cho mọi chuyến đi
             </Text>
             <Text className="mt-3 text-sm leading-6 text-text_color_2">
-              Explore services, promo offers, operators and top routes pulled
-              from live master data.
+              Khám phá dịch vụ, ưu đãi, nhà xe và các tuyến phổ biến từ dữ liệu
+              thực tế.
             </Text>
           </View>
 
           <View className="mt-6 flex-row gap-3">
             <View className="flex-1 rounded-[24px] bg-white/10 px-4 py-4">
               <Text className="text-xs uppercase tracking-[1px] text-[#b9d9e8]">
-                Live sections
+                Mục nội dung
               </Text>
               <Text className="mt-2 font-semibold text-xl text-white_color">
                 4
@@ -51,17 +51,17 @@ export default function HomeTab() {
             </View>
             <View className="flex-1 rounded-[24px] bg-[#f5a623] px-4 py-4">
               <Text className="text-xs uppercase tracking-[1px] text-primary_color">
-                Search flow
+                Tìm kiếm
               </Text>
               <Text className="mt-2 font-semibold text-xl text-primary_color">
-                Ready
+                Sẵn sàng
               </Text>
             </View>
           </View>
 
           <View className="mt-5">
             <AppButton
-              label="Open trip search tab"
+              label="Mở tab tìm chuyến"
               onPress={() => router.push("/(tabs)/search" as never)}
             />
           </View>
@@ -71,28 +71,28 @@ export default function HomeTab() {
           <View className="items-center rounded-[28px] bg-white_color px-5 py-10">
             <ActivityIndicator color="#f5a623" size="large" />
             <Text className="mt-3 text-sm text-text_color_4">
-              Loading home sections...
+              Đang tải dữ liệu trang chủ...
             </Text>
           </View>
         ) : null}
 
         {isError ? (
           <StateBlock
-            actionLabel="Retry"
+            actionLabel="Thử lại"
             description={getApiErrorMessage(error)}
             onActionPress={() => {
               void refetchAll();
             }}
-            title="Unable to load home data"
+            title="Không thể tải dữ liệu trang chủ"
           />
         ) : null}
 
         {!isLoading && !isError ? (
           <>
             <SectionTitle
-              actionLabel="Search trips"
+              actionLabel="Tìm chuyến"
               onPress={() => router.push("/(tabs)/search" as never)}
-              title="Services"
+              title="Dịch vụ"
             />
             {services.length ? (
               <View className="flex-row flex-wrap gap-3">
@@ -113,12 +113,12 @@ export default function HomeTab() {
               </View>
             ) : (
               <StateBlock
-                description="No services were returned from master data."
-                title="No services yet"
+                description="Chưa có dữ liệu dịch vụ từ hệ thống."
+                title="Chưa có dịch vụ"
               />
             )}
 
-            <SectionTitle title="Promo offers" />
+            <SectionTitle title="Ưu đãi" />
             {promos.length ? (
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View className="flex-row gap-3">
@@ -151,7 +151,7 @@ export default function HomeTab() {
               </ScrollView>
             ) : null}
 
-            <SectionTitle title="Operators" />
+            <SectionTitle title="Nhà xe" />
             <View className="gap-3">
               {operators.map((operator) => (
                 <View
@@ -178,7 +178,7 @@ export default function HomeTab() {
               ))}
             </View>
 
-            <SectionTitle title="Top trips" />
+            <SectionTitle title="Chuyến phổ biến" />
             <View className="gap-3">
               {trips.map((trip) => (
                 <View
@@ -186,7 +186,7 @@ export default function HomeTab() {
                   className="rounded-[24px] bg-white_color px-4 py-4"
                 >
                   <Text className="font-semibold text-base text-primary_color">
-                    {trip.from} to {trip.to}
+                    {trip.from} → {trip.to}
                   </Text>
                   <Text className="mt-1 text-sm text-text_color_4">
                     {trip.operator} · {trip.departure} · {trip.duration}
@@ -199,7 +199,7 @@ export default function HomeTab() {
                       onPress={() => router.push("/(tabs)/search" as never)}
                     >
                       <Text className="font-medium text-sm text-secondary_color">
-                        Search similar
+                        Tìm tương tự
                       </Text>
                     </Pressable>
                   </View>

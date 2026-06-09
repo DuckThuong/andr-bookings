@@ -8,24 +8,24 @@ export default function OtpConfirmShellScreen() {
 
   return (
     <AuthScreenShell
-      description="OTP confirmation remains a shell in this base, but the screen is available for navigation continuity."
-      eyebrow="OTP confirmation"
-      title="Enter the verification code"
+      description="Xác thực OTP tạm thời, màn hình này giữ liên thông luồng điều hướng."
+      eyebrow="Xác thực OTP"
+      title="Nhập mã xác thực"
     >
       <View className="gap-4">
         <FormNumber
-          helperText="Use any 6-digit code during shell navigation."
-          label="Verification code"
+          helperText="Nhập mã 6 chữ số bất kỳ để tiếp tục (màn hình tạm)."
+          label="Mã xác thực"
           onChangeText={setOtp}
-          placeholder="6-digit OTP"
+          placeholder="Mã OTP 6 số"
           value={otp}
         />
         <AppButton
-          label="Continue"
+          label="Tiếp tục"
           onPress={() => router.push("/(auth)/finish" as never)}
         />
         <AppButton
-          label="Back to login"
+          label="Quay lại đăng nhập"
           onPress={() => router.replace("/(auth)/login" as never)}
           variant="secondary"
         />

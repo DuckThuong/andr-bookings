@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const FALLBACK_ERROR_MESSAGE = "Something went wrong. Please try again.";
+const FALLBACK_ERROR_MESSAGE = "Đã xảy ra lỗi. Vui lòng thử lại.";
 
 export function getApiErrorMessage(error: unknown): string {
   if (!axios.isAxiosError(error)) {

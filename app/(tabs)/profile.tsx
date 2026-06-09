@@ -12,29 +12,29 @@ export default function ProfileTab() {
       <View className="flex-1 px-5 py-6">
         <View className="rounded-[32px] bg-primary_color px-5 py-6">
           <Text className="text-sm uppercase tracking-[1px] text-[#8dc7e3]">
-            Account
+            Tài khoản
           </Text>
           <Text className="mt-2 font-bold text-[28px] leading-9 text-white_color">
-            Manage your session
+            Quản lý phiên đăng nhập
           </Text>
           <Text className="mt-3 text-sm leading-6 text-text_color_2">
-            You are signed in and can continue searching and booking trips.
-            Sign out here when you want to end the current session.
+            Bạn đã đăng nhập và có thể tiếp tục tìm kiếm, đặt vé. Đăng xuất tại
+            đây khi muốn kết thúc phiên hiện tại.
           </Text>
         </View>
 
         <View className="mt-5 rounded-[28px] bg-white_color px-5 py-5">
           <Text className="font-semibold text-lg text-primary_color">
-            Session controls
+            Điều khiển phiên
           </Text>
           <Text className="mt-2 text-sm leading-6 text-text_color_4">
-            Signing out clears the saved access token on this device and returns
-            you to the login flow.
+            Đăng xuất sẽ xóa token đã lưu trên thiết bị và đưa bạn về màn hình
+            đăng nhập.
           </Text>
 
           <View className="mt-5">
             <AppButton
-              label="Sign out"
+              label="Đăng xuất"
               onPress={() =>
                 void signOut().then(() => router.replace("/(auth)/login" as never))
               }

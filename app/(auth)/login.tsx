@@ -42,15 +42,15 @@ export default function LoginScreen() {
 
   return (
     <AuthScreenShell
-      description="Use your phone number and password to continue. Search, compare and book trips with one account."
-      eyebrow="Account verification"
+      description="Dùng số điện thoại và mật khẩu để tiếp tục. Tìm kiếm, so sánh và đặt vé với một tài khoản duy nhất."
+      eyebrow="Xác thực tài khoản"
       footer={
         <View className="rounded-[28px] bg-[#00293a] px-4 py-5">
           <View className="flex-row items-center justify-between">
             {[
-              { value: "2M+", label: "Trips" },
-              { value: "500K", label: "Users" },
-              { value: "4.9", label: "Rating" },
+              { value: "2M+", label: "Chuyến đi" },
+              { value: "500K", label: "Người dùng" },
+              { value: "4.9", label: "Đánh giá" },
             ].map((item) => (
               <View key={item.label} className="flex-1 items-center">
                 <Text className="font-bold text-lg text-white_color">
@@ -64,26 +64,26 @@ export default function LoginScreen() {
           </View>
         </View>
       }
-      title="Sign in to your booking account"
+      title="Đăng nhập tài khoản đặt vé"
     >
       <View className="gap-4">
         <Controller
           control={control}
           name="phoneNumber"
           rules={{
-            required: "Phone number is required.",
+            required: "Vui lòng nhập số điện thoại.",
             minLength: {
               value: 9,
-              message: "Phone number looks too short.",
+              message: "Số điện thoại quá ngắn.",
             },
           }}
           render={({ field: { onChange, value }, fieldState }) => (
             <FormText
               error={fieldState.error?.message}
               keyboardType="phone-pad"
-              label="Phone number"
+              label="Số điện thoại"
               onChangeText={onChange}
-              placeholder="Enter your phone number"
+              placeholder="Nhập số điện thoại"
               value={value}
             />
           )}
@@ -93,20 +93,20 @@ export default function LoginScreen() {
           control={control}
           name="password"
           rules={{
-            required: "Password is required.",
+            required: "Vui lòng nhập mật khẩu.",
             minLength: {
               value: 6,
-              message: "Password must be at least 6 characters.",
+              message: "Mật khẩu phải có ít nhất 6 ký tự.",
             },
           }}
           render={({ field: { onChange, value }, fieldState }) => (
             <FormPassword
-              actionText="Help"
+              actionText="Trợ giúp"
               error={fieldState.error?.message}
-              label="Password"
+              label="Mật khẩu"
               onActionPress={() => router.push("/(auth)/otp-confirm" as never)}
               onChangeText={onChange}
-              placeholder="Enter your password"
+              placeholder="Nhập mật khẩu"
               value={value}
             />
           )}
@@ -117,7 +117,7 @@ export default function LoginScreen() {
         ) : null}
 
         <AppButton
-          label="Sign in"
+          label="Đăng nhập"
           loading={loginMutation.isPending}
           onPress={handleSubmit((values) => loginMutation.mutate(values))}
         />
@@ -125,7 +125,7 @@ export default function LoginScreen() {
         <View className="flex-row items-center gap-3 py-2">
           <View className="h-px flex-1 bg-color_border" />
           <Text className="text-xs uppercase tracking-[1px] text-text_color_4">
-            Or continue with
+            Hoặc tiếp tục với
           </Text>
           <View className="h-px flex-1 bg-color_border" />
         </View>
@@ -149,10 +149,10 @@ export default function LoginScreen() {
         </View>
 
         <View className="mt-2 flex-row items-center justify-center gap-1">
-          <Text className="text-sm text-text_color_4">New here?</Text>
+          <Text className="text-sm text-text_color_4">Chưa có tài khoản?</Text>
           <Pressable onPress={() => router.push("/(auth)/signin" as never)}>
             <Text className="font-semibold text-sm text-secondary_color">
-              Create account
+              Tạo tài khoản
             </Text>
           </Pressable>
         </View>
