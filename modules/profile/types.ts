@@ -24,6 +24,17 @@ export type UserProfile = {
   userRole: number;
   userStatus: number;
   userIsEmailVerified: boolean;
+  ticketCount?: number;
+  bookingCount?: number;
+  totalPaid?: number;
+  rank?: string;
+  spentAmount?: number;
+  nextRank?: string;
+  nextRankThreshold?: number;
+  rankProgressPercent?: number;
+  lastBookingAt?: string;
+  pendingTicketCount?: number;
+  refundCount?: number;
 };
 
 export type UpdateUserProfilePayload = {

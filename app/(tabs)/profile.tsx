@@ -160,7 +160,7 @@ export default function ProfileTab() {
               </Text>
               <View className="mt-2 self-start rounded-full bg-[#fef9c3] px-3 py-1">
                 <Text className="font-medium text-xs text-[#854d0e]">
-                  Thành viên Vàng
+                  {`Thành viên ${user?.rank || "Chưa xếp hạng"}`}
                 </Text>
               </View>
             </View>
@@ -175,15 +175,13 @@ export default function ProfileTab() {
               return (
                 <Pressable
                   key={tab.key}
-                  className={`rounded-full px-4 py-3 ${
-                    isActive ? "bg-secondary_color" : "bg-white_color"
-                  }`}
+                  className={`rounded-full px-4 py-3 ${isActive ? "bg-secondary_color" : "bg-white_color"
+                    }`}
                   onPress={() => setActiveTab(tab.key)}
                 >
                   <Text
-                    className={`font-medium text-sm ${
-                      isActive ? "text-white_color" : "text-primary_color"
-                    }`}
+                    className={`font-medium text-sm ${isActive ? "text-white_color" : "text-primary_color"
+                      }`}
                   >
                     {tab.label}
                   </Text>

@@ -10,6 +10,9 @@ type ProfileOverviewProps = {
   onViewTracking: () => void;
 };
 
+const formatCurrency = (value?: number) =>
+  new Intl.NumberFormat("vi-VN").format(value ?? 0);
+
 const REMINDERS = [
   "Hoàn tất thông tin thanh toán",
   "Kiểm tra lại chuyến đi sắp tới",
@@ -31,6 +34,7 @@ export function ProfileOverview({
       booking.status === "Chờ xác nhận",
   );
   const recentTrips = bookings.slice(0, 2);
+  const rank = user?.rank ?? "Chưa xếp hạng";
 
   return (
     <View className="gap-4">
@@ -46,7 +50,7 @@ export function ProfileOverview({
             </Text>
             <View className="mt-2 self-start rounded-full bg-[#fef9c3] px-3 py-1">
               <Text className="font-medium text-xs text-[#854d0e]">
-                Thành viên Vàng
+                {rank}
               </Text>
             </View>
           </View>
