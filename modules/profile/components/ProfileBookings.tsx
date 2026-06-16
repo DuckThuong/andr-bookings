@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { AppButton, FormText, StateBlock } from "@/shared/components";
 import { ProfileStatusBadge } from "@/modules/profile/components/ProfileStatusBadge";
+import { ProfileTicketStatusTracker } from "@/modules/profile/components/ProfileTicketStatusTracker";
 import type { ProfileBooking } from "@/modules/profile/types";
 
 type ProfileBookingsProps = {
@@ -124,6 +125,8 @@ export function ProfileBookings({
                 <DetailRow label="Liên hệ" value={selectedBooking.contactPhone} />
               </View>
 
+              <ProfileTicketStatusTracker booking={selectedBooking} />
+
               {selectedBooking.canEdit ? (
                 <View className="mt-4 gap-4">
                   <Text className="font-semibold text-base text-primary_color">
@@ -155,16 +158,15 @@ export function ProfileBookings({
                     }
                   />
                 </View>
-              ) : (
+              ) : selectedBooking.status === "Đã xác nhận" ||
+                selectedBooking.status === "Chờ khởi hành" ? null : (
                 <View className="mt-4 rounded-[16px] bg-[#fef9c3] px-4 py-3">
                   <Text className="text-sm text-[#854d0e]">
-                    {selectedBooking.status === "Đã xác nhận"
-                      ? "Vé đã xác nhận — không thể chỉnh sửa thêm."
-                      : selectedBooking.status === "Chờ xác nhận"
-                        ? "Đơn đang chờ nhà xe xác nhận — không thể chỉnh sửa."
-                        : selectedBooking.status === "Đã hủy"
-                          ? "Đơn đặt vé đã bị hủy — không thể chỉnh sửa."
-                          : "Chỉ có thể chỉnh sửa khi đơn đang giữ chỗ và chưa hết hạn."}
+                    {selectedBooking.status === "Chờ xác nhận"
+                      ? "Đơn đang chờ nhà xe xác nhận — không thể chỉnh sửa."
+                      : selectedBooking.status === "Đã hủy"
+                        ? "Đơn đặt vé đã bị hủy — không thể chỉnh sửa."
+                        : "Chỉ có thể chỉnh sửa khi đơn đang giữ chỗ và chưa hết hạn."}
                   </Text>
                 </View>
               )}
