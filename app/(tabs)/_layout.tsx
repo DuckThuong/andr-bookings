@@ -64,6 +64,26 @@ const TabLayout = () => {
       />
 
       <Tabs.Screen
+        name="messages"
+        options={{
+          tabBarIcon: ({
+            color,
+            focused,
+          }: {
+            color: string;
+            focused: boolean;
+          }) => (
+            <Ionicons
+              color={color}
+              name={focused ? "chatbubbles" : "chatbubbles-outline"}
+              size={24}
+            />
+          ),
+          tabBarLabel: "Tin nhắn",
+        }}
+      />
+
+      <Tabs.Screen
         name="profile"
         options={{
           tabBarIcon: ({
