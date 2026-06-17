@@ -12,14 +12,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { CHAT_QUERY_KEYS } from "@/modules/chat/hooks";
 import {
-  createConversation,
-  getConversations,
-  getOperatorDirectory,
+  CHAT_QUERY_KEYS,
+  createChatConversation,
+  getChatConversations,
+  getOperatorHotlines,
 } from "@/modules/chat/api";
 import { ChatListItem } from "@/modules/chat/components";
-import type { Conversation } from "@/modules/chat/types";
+import type { ConversationResponseDto } from "@/modules/chat/dtos";
 
 type FilterKey = "all" | "operator" | "admin";
 
@@ -38,17 +38,17 @@ export default function MessagesScreen() {
 
   const conversationsQuery = useQuery({
     queryKey: CHAT_QUERY_KEYS.CONVERSATIONS,
-    queryFn: getConversations,
+    queryFn: getChatConversations,
   });
 
   const operatorsQuery = useQuery({
     queryKey: CHAT_QUERY_KEYS.OPERATORS,
-    queryFn: getOperatorDirectory,
+    queryFn: getOperatorHotlines,
   });
 
   const startMutation = useMutation({
-    mutationFn: createConversation,
-    onSuccess: (conversation: Conversation) => {
+    mutationFn: createChatConversation,
+    onSuccess: (conversation) => {
       void queryClient.invalidateQueries({
         queryKey: CHAT_QUERY_KEYS.CONVERSATIONS,
       });
@@ -57,13 +57,13 @@ export default function MessagesScreen() {
     },
   });
 
-  const conversations: Conversation[] = conversationsQuery.data ?? [];
-  const operators: Conversation[] = operatorsQuery.data ?? [];
+  const conversations: ConversationResponseDto[] = conversationsQuery.data ?? [];
+  const operators: ConversationResponseDto[] = operatorsQuery.data ?? [];
 
   const filteredConversations = useMemo(() => {
-    let items: Conversation[] = conversations;
+    let items: ConversationResponseDto[] = conversations;
     if (filter !== "all") {
-      items = items.filter((item: Conversation) =>
+      items = items.filter((item) =>
         filter === "operator"
           ? item.type === "OPERATOR"
           : item.type === "ADMIN" || item.type === "SUPPORT",
@@ -72,7 +72,7 @@ export default function MessagesScreen() {
     if (search.trim()) {
       const keyword = search.toLowerCase();
       items = items.filter(
-        (item: Conversation) =>
+        (item) =>
           (item.conversationName ?? "").toLowerCase().includes(keyword) ||
           (item.lastMessagePreview ?? "").toLowerCase().includes(keyword),
       );
@@ -83,7 +83,7 @@ export default function MessagesScreen() {
   const totalUnread = useMemo(
     () =>
       conversations.reduce(
-        (sum: number, item: Conversation) => sum + (item.unreadCount ?? 0),
+        (sum, item) => sum + (item.unreadCount ?? 0),
         0,
       ),
     [conversations],
@@ -135,17 +135,15 @@ export default function MessagesScreen() {
           {(Object.keys(FILTER_LABELS) as FilterKey[]).map((key) => (
             <Pressable
               key={key}
-              className={`rounded-full px-3 py-1.5 ${
-                filter === key ? "bg-[#f5a623]" : "bg-white/10"
-              }`}
+              className={`rounded-full px-3 py-1.5 ${filter === key ? "bg-[#f5a623]" : "bg-white/10"
+                }`}
               onPress={() => setFilter(key)}
             >
               <Text
-                className={`text-xs font-semibold ${
-                  filter === key
-                    ? "text-primary_color"
-                    : "text-white_color"
-                }`}
+                className={`text-xs font-semibold ${filter === key
+                  ? "text-primary_color"
+                  : "text-white_color"
+                  }`}
               >
                 {FILTER_LABELS[key]}
               </Text>
@@ -167,7 +165,7 @@ export default function MessagesScreen() {
           <ActivityIndicator color="#00609c" />
         </View>
       ) : (
-        <FlatList<Conversation>
+        <FlatList<ConversationResponseDto>
           data={filteredConversations}
           keyExtractor={(item) => String(item.conversationId)}
           renderItem={({ item }) => (
@@ -207,7 +205,7 @@ export default function MessagesScreen() {
             Liên hệ nhanh
           </Text>
           <View className="flex-row gap-2 flex-wrap">
-            {operators.slice(0, 3).map((operator: Conversation) => (
+            {operators.slice(0, 3).map((operator) => (
               <Pressable
                 key={operator.conversationId}
                 className="flex-row items-center gap-2 rounded-full bg-background_color border border-[#e5ebef] px-3 py-2"

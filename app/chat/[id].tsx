@@ -17,14 +17,13 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
-  getConversation,
-  getConversationMessages,
-  sendMessage,
-} from "@/modules/chat/api";
-import { CHAT_QUERY_KEYS } from "@/modules/chat/hooks";
+  useConversationQuery,
+  useConversationMessagesQuery,
+  useSendMessageMutation,
+} from "@/modules/chat/hooks";
 import { ChatBubble, ChatComposer } from "@/modules/chat/components";
-import type { ChatMessage } from "@/modules/chat/types";
 import { sortMessagesAsc } from "@/modules/chat/mappers";
+import type { MessageResponseDto } from "@/modules/chat/dtos";
 
 const QUICK_REPLIES_BY_TYPE: Record<string, string[]> = {
   OPERATOR: [
@@ -61,42 +60,11 @@ export default function ChatDetailScreen() {
   } | null>(null);
   const [infoOpen, setInfoOpen] = useState(false);
 
-  const conversationQuery = useQuery({
-    queryKey: [CHAT_QUERY_KEYS.CONVERSATION(conversationId)],
-    queryFn: () => getConversation(conversationId),
-    enabled: Number.isFinite(conversationId),
-  });
+  const conversationQuery = useConversationQuery(conversationId);
+  const messagesQuery = useConversationMessagesQuery(conversationId);
+  const sendMutation = useSendMessageMutation(conversationId);
 
-  const messagesQuery = useQuery<ChatMessage[]>({
-    queryKey: CHAT_QUERY_KEYS.MESSAGES(conversationId),
-    queryFn: () => getConversationMessages(conversationId),
-    enabled: Number.isFinite(conversationId),
-  });
-
-  const sendMutation = useMutation({
-    mutationFn: (payload: { content?: string }) =>
-      sendMessage({
-        conversationId,
-        content: payload.content,
-      }),
-    onSuccess: (message) => {
-      queryClient.setQueryData<ChatMessage[]>(
-        CHAT_QUERY_KEYS.MESSAGES(conversationId),
-        (current = []) => {
-          if (current.some((m) => m.id === message.id)) return current;
-          return [...current, message];
-        },
-      );
-    },
-    onError: (error) => {
-      Alert.alert(
-        "Lỗi",
-        error instanceof Error ? error.message : "Không thể gửi tin nhắn",
-      );
-    },
-  });
-
-  const messages = sortMessagesAsc(messagesQuery.data ?? []);
+  const messages = sortMessagesAsc(messagesQuery.data?.data ?? []);
 
   useEffect(() => {
     setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 80);
@@ -308,7 +276,7 @@ export default function ChatDetailScreen() {
                   key={label}
                   className="chat-quick__item"
                   onPress={() =>
-                    sendMutation.mutate({ content: label })
+                    sendMutation.mutate({ content: label, conversationId })
                   }
                 >
                   <Text className="chat-quick__item-text">{label}</Text>
@@ -321,7 +289,7 @@ export default function ChatDetailScreen() {
         {/* ─── Composer ─── */}
         <ChatComposer
           onSend={(payload) =>
-            sendMutation.mutate({ content: payload.content })
+            sendMutation.mutate({ content: payload.content, conversationId })
           }
           placeholder={`Nhắn cho ${conversation.conversationName}...`}
           busy={sendMutation.isPending}

@@ -1,6 +1,6 @@
 import { View, Text, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import type { Conversation } from "../types";
+import type { ConversationResponseDto } from "../dtos";
 import {
   formatConversationTime,
   getConversationDisplayName,
@@ -10,30 +10,30 @@ import {
 } from "../mappers";
 
 export interface ChatListItemProps {
-  conversation: Conversation;
+  conversation: ConversationResponseDto;
   isActive?: boolean;
   onPress?: () => void;
 }
 
-const TYPE_BADGE_COLOR: Record<Conversation["type"], string> = {
+const TYPE_BADGE_COLOR: Record<ConversationResponseDto["type"], string> = {
   OPERATOR: "#00609c",
   ADMIN: "#16a34a",
   SUPPORT: "#16a34a",
 };
 
-const TYPE_BADGE_ICON: Record<Conversation["type"], keyof typeof Ionicons.glyphMap> = {
+const TYPE_BADGE_ICON: Record<ConversationResponseDto["type"], keyof typeof Ionicons.glyphMap> = {
   OPERATOR: "bus",
   ADMIN: "headset",
   SUPPORT: "help-circle",
 };
 
-const TYPE_TAG_BG: Record<Conversation["type"], string> = {
+const TYPE_TAG_BG: Record<ConversationResponseDto["type"], string> = {
   OPERATOR: "bg-[#e0f2fe]",
   ADMIN: "bg-[#dcfce7]",
   SUPPORT: "bg-[#dcfce7]",
 };
 
-const TYPE_TAG_TEXT: Record<Conversation["type"], string> = {
+const TYPE_TAG_TEXT: Record<ConversationResponseDto["type"], string> = {
   OPERATOR: "text-[#00609c]",
   ADMIN: "text-[#15803d]",
   SUPPORT: "text-[#15803d]",

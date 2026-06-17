@@ -1,16 +1,19 @@
 import { View, Text, Image, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import type { ChatMessage, ChatMessageAttachment } from "../types";
+import type {
+  MessageResponseDto,
+  MessageAttachmentResponseDto,
+} from "../dtos";
 import { formatMessageTime } from "../mappers";
 
 export interface ChatBubbleProps {
-  message: ChatMessage;
+  message: MessageResponseDto;
   isYour: boolean;
   showSender?: boolean;
   senderName?: string;
   senderAvatar?: string;
   onOpenImage?: (
-    images: ChatMessageAttachment[],
+    images: MessageAttachmentResponseDto[],
     startIndex: number,
   ) => void;
   messageStatus?: "SENT" | "DELIVERED" | "READ";
@@ -32,7 +35,7 @@ export const ChatBubble = ({
   messageStatus,
   showStatus,
 }: ChatBubbleProps) => {
-  const attachments: ChatMessageAttachment[] = message.attachments || [];
+  const attachments: MessageAttachmentResponseDto[] = message.attachments || [];
   const imageAttachments = attachments.filter((a) =>
     a.mimeType?.startsWith("image/"),
   );

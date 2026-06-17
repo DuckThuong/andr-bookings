@@ -1,22 +1,12 @@
-import type { ChatMessage, Conversation } from "./types";
+import type { ConversationResponseDto } from "./dtos";
+import { ChatMessage } from "./types";
 
-export const mapConversationsByTime = (items: Conversation[]) =>
+export const mapConversationsByTime = (items: ConversationResponseDto[]) =>
   [...items].sort(
     (a, b) =>
       new Date(b.lastMessageAt ?? 0).getTime() -
       new Date(a.lastMessageAt ?? 0).getTime(),
   );
-
-export const mapPinnedFirst = (items: Conversation[]) => {
-  const pinned: Conversation[] = [];
-  const rest: Conversation[] = [];
-  items.forEach((item) => {
-    const isPinned = item.participants.find((p) => p.userId === 1)?.isPinned;
-    if (isPinned) pinned.push(item);
-    else rest.push(item);
-  });
-  return [...pinned, ...rest];
-};
 
 export const formatConversationTime = (iso?: string) => {
   if (!iso) return "";
@@ -49,20 +39,22 @@ export const formatMessageTime = (iso: string) => {
   return `${hours}:${minutes}`;
 };
 
-export const getConversationDisplayName = (conversation: Conversation) =>
+export const getConversationDisplayName = (
+  conversation: ConversationResponseDto,
+) =>
   conversation.conversationName ||
   conversation.toUser?.fullName ||
   "Cuộc trò chuyện";
 
-export const getConversationAvatar = (conversation: Conversation) =>
+export const getConversationAvatar = (conversation: ConversationResponseDto) =>
   conversation.conversationAvatar ||
   conversation.toUser?.avatarUrl ||
   (getConversationDisplayName(conversation).charAt(0) ?? "?");
 
-export const isOperatorConversation = (conversation: Conversation) =>
+export const isOperatorConversation = (conversation: ConversationResponseDto) =>
   conversation.type === "OPERATOR";
 
-export const isAdminConversation = (conversation: Conversation) =>
+export const isAdminConversation = (conversation: ConversationResponseDto) =>
   conversation.type === "ADMIN";
 
 export const sortMessagesAsc = (messages: ChatMessage[]) =>
@@ -70,7 +62,9 @@ export const sortMessagesAsc = (messages: ChatMessage[]) =>
     (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
   );
 
-export const getConversationInitials = (conversation: Conversation) => {
+export const getConversationInitials = (
+  conversation: ConversationResponseDto,
+) => {
   const name = getConversationDisplayName(conversation);
   return name
     .split(/\s+/)
@@ -79,7 +73,9 @@ export const getConversationInitials = (conversation: Conversation) => {
     .join("");
 };
 
-export const getConversationPreview = (conversation: Conversation) => {
+export const getConversationPreview = (
+  conversation: ConversationResponseDto,
+) => {
   if (conversation.lastMessagePreview) {
     return conversation.lastMessagePreview;
   }
@@ -89,7 +85,7 @@ export const getConversationPreview = (conversation: Conversation) => {
   return "Đội ngũ GoRide luôn sẵn sàng hỗ trợ bạn.";
 };
 
-export const getTypeLabel = (type: Conversation["type"]) => {
+export const getTypeLabel = (type: ConversationResponseDto["type"]) => {
   switch (type) {
     case "OPERATOR":
       return "Nhà xe";

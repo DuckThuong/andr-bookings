@@ -1,56 +1,57 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  createConversation,
-  getConversation,
+  createChatConversation,
+  getChatConversationDetail,
   getConversationMessages,
-  getConversations,
-  getOperatorDirectory,
-  sendMessage,
+  getChatConversations,
+  getOperatorHotlines,
+  sendChatMessage,
+  CHAT_QUERY_KEYS,
 } from "./api";
-import type { CreateConversationPayload, SendMessagePayload } from "./types";
-
-export const CHAT_QUERY_KEYS = {
-  CONVERSATIONS: ["chat", "conversations"] as const,
-  CONVERSATION: (id: number) => ["chat", "conversations", id] as const,
-  MESSAGES: (id: number) => ["chat", "conversations", id, "messages"] as const,
-  OPERATORS: ["chat", "operators"] as const,
-};
+import type { CreateConversationDto, SendMessagePayloadDto } from "./dtos";
 
 export const useConversationsQuery = () =>
   useQuery({
     queryKey: CHAT_QUERY_KEYS.CONVERSATIONS,
-    queryFn: getConversations,
+    queryFn: getChatConversations,
   });
 
 export const useConversationQuery = (id: number | null) =>
   useQuery({
     queryKey: id ? CHAT_QUERY_KEYS.CONVERSATION(id) : ["chat", "noop"],
-    queryFn: () => getConversation(id!),
+    queryFn: () => getChatConversationDetail(id!),
     enabled: id !== null,
   });
 
 export const useConversationMessagesQuery = (id: number | null) =>
   useQuery({
     queryKey: id ? CHAT_QUERY_KEYS.MESSAGES(id) : ["chat", "noop-messages"],
-    queryFn: () => getConversationMessages(id!),
+    queryFn: () => getConversationMessages(id!, { page: 1, limit: 50 }),
     enabled: id !== null,
   });
 
 export const useOperatorDirectoryQuery = () =>
   useQuery({
     queryKey: CHAT_QUERY_KEYS.OPERATORS,
-    queryFn: getOperatorDirectory,
+    queryFn: getOperatorHotlines,
   });
 
 export const useSendMessageMutation = (conversationId: number) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (payload: SendMessagePayload) => sendMessage(payload),
+    mutationFn: (payload: SendMessagePayloadDto) =>
+      sendChatMessage(payload),
     onSuccess: (message) => {
       queryClient.setQueryData(
         CHAT_QUERY_KEYS.MESSAGES(conversationId),
-        (current: Awaited<ReturnType<typeof getConversationMessages>> | undefined) =>
-          current ? [...current, message] : [message],
+        (current: unknown) => {
+          const messages = current as
+            | { data?: Array<{ id: number }> }
+            | undefined;
+          const list = messages?.data ?? [];
+          if (list.some((m) => m.id === message.id)) return messages;
+          return { data: [...list, message] };
+        },
       );
       void queryClient.invalidateQueries({
         queryKey: CHAT_QUERY_KEYS.CONVERSATIONS,
@@ -62,8 +63,8 @@ export const useSendMessageMutation = (conversationId: number) => {
 export const useCreateConversationMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (payload: CreateConversationPayload) =>
-      createConversation(payload),
+    mutationFn: (payload: CreateConversationDto) =>
+      createChatConversation(payload),
     onSuccess: () => {
       void queryClient.invalidateQueries({
         queryKey: CHAT_QUERY_KEYS.CONVERSATIONS,
