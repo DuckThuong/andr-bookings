@@ -1,0 +1,123 @@
+import type { Socket } from "socket.io-client";
+import { authStorageService } from "@/modules/auth/storage";
+import { getSocketClient, refreshSocketAuth } from "./socket-client";
+import type { SocketAck } from "./socket-types";
+
+type EventHandler<T> = (payload: T) => void;
+
+class SocketManager {
+  private socket: Socket;
+  private trackedRequests = new Map<
+    string,
+    { event: string; payload: Record<string, unknown> }
+  >();
+
+  constructor() {
+    this.socket = getSocketClient();
+    this.socket.on("connect", () => {
+      this.rejoinEvents();
+    });
+  }
+
+  public async connect() {
+    await refreshSocketAuth();
+    if (!this.socket.connected) {
+      this.socket.connect();
+    }
+  }
+
+  public disconnect() {
+    if (this.socket.connected) {
+      this.socket.disconnect();
+    }
+  }
+
+  public emit<TPayload, TAck>(
+    event: string,
+    payload: TPayload,
+  ): Promise<SocketAck<TAck>> {
+    return new Promise((resolve) => {
+      void this.connect();
+      this.socket.timeout(10_000).emit(
+        event,
+        payload,
+        (error: Error | null, response: SocketAck<TAck>) => {
+          if (error) {
+            // socket gateway chưa sẵn sàng / timeout - resolve với success=false
+            // để caller tự quyết định fallback thay vì để unhandled rejection
+            resolve({ success: false, message: error.message });
+            return;
+          }
+          resolve(response);
+        },
+      );
+    });
+  }
+
+  public subscribe<TPayload>(
+    event: string,
+    handler: EventHandler<TPayload>,
+  ): () => void {
+    const wrappedHandler = (payload: TPayload) => {
+      handler(payload);
+    };
+
+    this.socket.on(event, wrappedHandler);
+
+    return () => {
+      this.socket.off(event, wrappedHandler);
+    };
+  }
+
+  public async trackRequest(
+    key: string,
+    event: string,
+    payload: Record<string, unknown>,
+  ): Promise<void> {
+    this.trackedRequests.set(key, { event, payload });
+    const response = await this.emit<Record<string, unknown>, null>(
+      event,
+      payload,
+    );
+    if (!response.success) {
+      throw new Error(response.message || `Failed to emit ${event}`);
+    }
+  }
+
+  public async untrackRequest(
+    key: string,
+    event: string,
+    payload: Record<string, unknown>,
+  ): Promise<void> {
+    this.trackedRequests.delete(key);
+    const response = await this.emit<Record<string, unknown>, null>(
+      event,
+      payload,
+    );
+    if (!response.success) {
+      throw new Error(response.message || `Failed to emit ${event}`);
+    }
+  }
+
+  public isConnected() {
+    return this.socket.connected;
+  }
+
+  private rejoinEvents() {
+    this.trackedRequests.forEach(({ event, payload }) => {
+      this.socket.emit(event, payload);
+    });
+  }
+}
+
+export const socketManager = new SocketManager();
+
+// Gắn thêm authStorageService listener để đồng bộ token realtime khi user login/logout
+authStorageService.subscribe(async (token) => {
+  await refreshSocketAuth();
+  if (!token) {
+    socketManager.disconnect();
+  } else {
+    void socketManager.connect();
+  }
+});
