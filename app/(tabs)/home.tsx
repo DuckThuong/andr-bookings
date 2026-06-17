@@ -1,4 +1,5 @@
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback } from "react";
 import {
   ActivityIndicator,
   ScrollView,
@@ -22,6 +23,24 @@ export default function HomeTab() {
     error,
     refetchAll,
   } = useHomeSections();
+
+  useFocusEffect(
+    useCallback(() => {
+      let ignore = false;
+
+      const doFetch = async () => {
+        if (!ignore) {
+          await refetchAll();
+        }
+      };
+
+      void doFetch();
+
+      return () => {
+        ignore = true;
+      };
+    }, []),
+  );
 
   return (
     <SafeAreaView className="flex-1 bg-background_color">

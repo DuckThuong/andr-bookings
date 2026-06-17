@@ -1,5 +1,5 @@
-import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -45,6 +45,27 @@ export default function ProfileTab() {
 
   const updateProfileMutation = useUpdateProfileMutation();
   const updateBookingMutation = useUpdateBookingPassengerMutation();
+
+  useFocusEffect(
+    useCallback(() => {
+      let ignore = false;
+
+      const doFetch = async () => {
+        if (!ignore) {
+          await Promise.all([
+            profileQuery.refetch(),
+            bookingsQuery.refetch(),
+          ]);
+        }
+      };
+
+      void doFetch();
+
+      return () => {
+        ignore = true;
+      };
+    }, []),
+  );
 
   useEffect(() => {
     if (!bookings.length) {

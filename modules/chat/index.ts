@@ -5,3 +5,4 @@ export * from "./hooks";
 export * from "./mappers";
 export * from "./dtos";
 export * from "./components";
+export * from "./useChatSocket";

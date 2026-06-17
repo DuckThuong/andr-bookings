@@ -8,6 +8,7 @@ import {
   sendChatMessage,
   CHAT_QUERY_KEYS,
 } from "./api";
+import { sortMessagesAsc } from "./mappers";
 import type {
   CreateConversationDto,
   MessageResponseDto,
@@ -32,6 +33,7 @@ export const useConversationMessagesQuery = (id: number | null) =>
     queryKey: id ? CHAT_QUERY_KEYS.MESSAGES(id) : ["chat", "noop-messages"],
     queryFn: () => getConversationMessages(id!, { page: 1, limit: 50 }),
     enabled: id !== null,
+    select: (data) => sortMessagesAsc(data),
   });
 
 export const useOperatorDirectoryQuery = () =>

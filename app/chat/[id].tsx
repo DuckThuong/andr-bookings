@@ -21,8 +21,8 @@ import {
   useConversationMessagesQuery,
   useSendMessageMutation,
 } from "@/modules/chat/hooks";
+import { useChatSocket } from "@/modules/chat/useChatSocket";
 import { ChatBubble, ChatComposer } from "@/modules/chat/components";
-import { sortMessagesAsc } from "@/modules/chat/mappers";
 import type { MessageResponseDto } from "@/modules/chat/dtos";
 
 const QUICK_REPLIES_BY_TYPE: Record<string, string[]> = {
@@ -64,7 +64,9 @@ export default function ChatDetailScreen() {
   const messagesQuery = useConversationMessagesQuery(conversationId);
   const sendMutation = useSendMessageMutation(conversationId);
 
-  const messages = sortMessagesAsc(messagesQuery.data ?? []);
+  useChatSocket(conversationId);
+
+  const messages = messagesQuery.data ?? [];
 
   useEffect(() => {
     setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 80);

@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -45,6 +46,27 @@ export default function MessagesScreen() {
     queryKey: CHAT_QUERY_KEYS.OPERATORS,
     queryFn: getOperatorHotlines,
   });
+
+  useFocusEffect(
+    useCallback(() => {
+      let ignore = false;
+
+      const doFetch = async () => {
+        if (!ignore) {
+          await Promise.all([
+            conversationsQuery.refetch(),
+            operatorsQuery.refetch(),
+          ]);
+        }
+      };
+
+      void doFetch();
+
+      return () => {
+        ignore = true;
+      };
+    }, []),
+  );
 
   const startMutation = useMutation({
     mutationFn: createChatConversation,
