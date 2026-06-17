@@ -81,6 +81,7 @@ export const mapAccountBookingToProfile = (
 ): ProfileBooking => {
   const road = item.schedule?.road;
   const trip = item.schedule?.trip;
+  const company = item.schedule?.company;
   const passenger = item.passenger;
   const ticket = (item as AccountBookingDetail).ticket;
   const route =
@@ -110,6 +111,9 @@ export const mapAccountBookingToProfile = (
     contactEmail,
     note: "",
     canEdit: canEditBooking(item),
+    operatorCode: company?.code,
+    operatorName: company?.companyName,
+    operatorUserId: company?.operatorUserId,
   };
 };
 

@@ -65,9 +65,16 @@ export type AccountBookingScheduleTrip = {
   name?: string;
 };
 
+export type AccountBookingScheduleCompany = {
+  code?: string;
+  companyName?: string;
+  operatorUserId?: number;
+};
+
 export type AccountBookingSchedule = {
   trip?: AccountBookingScheduleTrip | null;
   road?: AccountBookingScheduleRoad | null;
+  company?: AccountBookingScheduleCompany | null;
 };
 
 export type AccountBookingSeat = {
