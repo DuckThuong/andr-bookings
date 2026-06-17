@@ -1,5 +1,7 @@
 import { ReactNode, useState } from "react";
-import { Switch, Text, View } from "react-native";
+import { Switch, Text, View, Pressable } from "react-native";
+import { Link } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { AppButton } from "@/shared/components";
 
 type ProfileSettingsProps = {
@@ -81,6 +83,14 @@ export function ProfileSettings({ onSignOut }: ProfileSettingsProps) {
       <View className="rounded-[28px] bg-white_color px-4 py-5">
         <AppButton label="Lưu cài đặt" onPress={() => undefined} />
         <View className="mt-3">
+          <Link href="/company-registration" asChild>
+            <Pressable className="mb-3 flex-row items-center justify-center rounded-full border border-primary_color py-3">
+              <Ionicons name="business" size={18} color="#f97316" />
+              <Text className="ml-2 font-semibold text-primary_color">Đăng ký nhà xe</Text>
+            </Pressable>
+          </Link>
+        </View>
+        <View className="mt-1">
           <AppButton label="Đăng xuất" onPress={onSignOut} variant="secondary" />
         </View>
       </View>

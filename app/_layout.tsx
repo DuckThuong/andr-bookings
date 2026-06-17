@@ -38,6 +38,7 @@ export default function RootLayout() {
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="booking" />
             <Stack.Screen name="chat" />
+            <Stack.Screen name="company-registration" />
           </Stack>
         </AppProviders>
       </SafeAreaProvider>
