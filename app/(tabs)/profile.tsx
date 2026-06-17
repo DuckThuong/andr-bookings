@@ -146,6 +146,12 @@ export default function ProfileTab() {
               });
             }}
             onSelect={setSelectedBookingId}
+            onContactOperator={(operatorCode, operatorName, operatorUserId) => {
+              if (operatorUserId) {
+                // Navigate to messages tab with userId to create conversation
+                router.push(`/messages?userId=${operatorUserId}&operator=${operatorCode ?? ""}&name=${operatorName ?? ""}` as never);
+              }
+            }}
             saving={updateBookingMutation.isPending}
             selectedBooking={activeBooking}
           />

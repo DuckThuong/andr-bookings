@@ -1,5 +1,5 @@
-import { useFocusEffect } from "expo-router";
-import { useCallback, useMemo, useState } from "react";
+import { useFocusEffect, useLocalSearchParams } from "expo-router";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -33,9 +33,20 @@ const FILTER_LABELS: Record<FilterKey, string> = {
 export default function MessagesScreen() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const params = useLocalSearchParams<{ userId?: string; operator?: string; name?: string }>();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<FilterKey>("all");
   const [selectedId, setSelectedId] = useState<number | null>(null);
+
+  // Track processed userIds to avoid duplicate conversation creation
+  const processedUserIdsRef = useRef<Set<number>>(new Set());
+
+  // Reset tracking when params change
+  useFocusEffect(
+    useCallback(() => {
+      processedUserIdsRef.current = new Set();
+    }, [params.userId]),
+  );
 
   const conversationsQuery = useQuery({
     queryKey: CHAT_QUERY_KEYS.CONVERSATIONS,
@@ -46,6 +57,32 @@ export default function MessagesScreen() {
     queryKey: CHAT_QUERY_KEYS.OPERATORS,
     queryFn: getOperatorHotlines,
   });
+
+  // Handle direct contact from booking profile with userId
+  useEffect(() => {
+    if (conversationsQuery.isLoading) return;
+
+    const userIdParam = params.userId;
+    if (!userIdParam) return;
+
+    const toUserId = parseInt(userIdParam, 10);
+    if (isNaN(toUserId)) return;
+
+    // Skip if already processed this userId
+    if (processedUserIdsRef.current.has(toUserId)) return;
+    processedUserIdsRef.current.add(toUserId);
+
+    // Check if there's already an existing conversation with this userId
+    const existingConversation = (conversationsQuery.data ?? []).find(
+      (conv) => conv.participants.some((p) => p.userId === toUserId),
+    );
+
+    if (existingConversation) {
+      router.push(`/chat/${existingConversation.conversationId}` as never);
+    } else {
+      startMutation.mutate({ toUserId, type: "OPERATOR" });
+    }
+  }, [conversationsQuery.isLoading, conversationsQuery.data, params.userId, router]);
 
   useFocusEffect(
     useCallback(() => {

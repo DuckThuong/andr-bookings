@@ -13,6 +13,7 @@ type ProfileBookingsProps = {
   saving: boolean;
   onSelect: (id: string) => void;
   onSave: (values: Partial<ProfileBooking>) => void;
+  onContactOperator?: (operatorCode?: string, operatorName?: string, operatorUserId?: number) => void;
 };
 
 export function ProfileBookings({
@@ -23,6 +24,7 @@ export function ProfileBookings({
   saving,
   onSelect,
   onSave,
+  onContactOperator,
 }: ProfileBookingsProps) {
   const [passengerName, setPassengerName] = useState("");
   const [contactPhone, setContactPhone] = useState("");
@@ -125,7 +127,10 @@ export function ProfileBookings({
                 <DetailRow label="Liên hệ" value={selectedBooking.contactPhone} />
               </View>
 
-              <ProfileTicketStatusTracker booking={selectedBooking} />
+              <ProfileTicketStatusTracker
+                booking={selectedBooking}
+                onContactOperator={onContactOperator}
+              />
 
               {selectedBooking.canEdit ? (
                 <View className="mt-4 gap-4">

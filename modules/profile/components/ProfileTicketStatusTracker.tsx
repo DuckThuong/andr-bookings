@@ -4,6 +4,7 @@ import type { ProfileBooking, ProfileBookingStatus } from "@/modules/profile/typ
 
 type ProfileTicketStatusTrackerProps = {
   booking: ProfileBooking;
+  onContactOperator?: (operatorCode?: string, operatorName?: string, operatorUserId?: number) => void;
 };
 
 type TrackerStep = {
@@ -71,6 +72,7 @@ const ACTIVE_STEP_INDEX: Record<ProfileBookingStatus, number> = {
 
 export function ProfileTicketStatusTracker({
   booking,
+  onContactOperator,
 }: ProfileTicketStatusTrackerProps) {
   if (!APPROVED_STATUSES.includes(booking.status)) {
     return null;
@@ -78,6 +80,7 @@ export function ProfileTicketStatusTracker({
 
   const steps = STEP_BY_STATUS[booking.status];
   const activeIndex = ACTIVE_STEP_INDEX[booking.status];
+  const canContact = booking.operatorCode && booking.operatorName;
 
   return (
     <View className="mt-4 rounded-[24px] bg-[#f0f9ff] px-4 py-5">
@@ -177,7 +180,8 @@ export function ProfileTicketStatusTracker({
         </Pressable>
         <Pressable
           className="flex-1 items-center justify-center rounded-[16px] bg-secondary_color px-3 py-3"
-          onPress={() => undefined}
+          onPress={() => onContactOperator?.(booking.operatorCode, booking.operatorName, booking.operatorUserId)}
+          disabled={!canContact}
         >
           <Text className="font-semibold text-xs text-white_color">
             Liên hệ nhà xe

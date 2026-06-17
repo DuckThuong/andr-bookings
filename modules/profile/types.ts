@@ -131,6 +131,9 @@ export type ProfileBooking = {
   contactEmail: string;
   note: string;
   canEdit: boolean;
+  operatorCode?: string;
+  operatorName?: string;
+  operatorUserId?: number;
 };
 
 export type PassengerPayload = {
