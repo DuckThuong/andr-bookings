@@ -1,4 +1,4 @@
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { useCallback } from "react";
 import { useState } from "react";
 import {
@@ -127,9 +127,20 @@ export default function SearchScreen() {
           <View className="gap-3">
             {trips.length ? (
               trips.map((trip) => (
-                <View
+                <Pressable
                   key={trip.id}
                   className="rounded-[24px] bg-white_color px-4 py-4"
+                  onPress={() => {
+                    router.push({
+                      pathname: "/booking/seat-selection",
+                      params: {
+                        tripId: trip.id,
+                        date: date,
+                        from: trip.departure.city,
+                        to: trip.arrival.city,
+                      },
+                    });
+                  }}
                 >
                   <Text className="font-semibold text-base text-primary_color">
                     {trip.departure.city} → {trip.arrival.city}
@@ -141,13 +152,11 @@ export default function SearchScreen() {
                     <Text className="font-semibold text-base text-secondary_color">
                       {trip.price.toLocaleString()} VND
                     </Text>
-                    <Pressable onPress={() => router.push("/(tabs)/search" as never)}>
-                      <Text className="font-medium text-sm text-secondary_color">
-                        Tìm tương tự
-                      </Text>
-                    </Pressable>
+                    <Text className="font-medium text-sm text-secondary_color">
+                      Chọn ghế →
+                    </Text>
                   </View>
-                </View>
+                </Pressable>
               ))
             ) : (
               <View className="items-center justify-center py-16 px-6">

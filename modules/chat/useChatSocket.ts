@@ -49,6 +49,21 @@ export function useChatSocket(conversationId: number | null) {
         updated,
       );
       await syncMessages(conversationId);
+
+      const conversations = (queryClient.getQueryData<ConversationResponseDto[]>(
+        CHAT_QUERY_KEYS.CONVERSATIONS,
+      )) ?? [];
+      const refreshed = conversations.map((conv) =>
+        conv.conversationId === conversationId
+          ? {
+              ...conv,
+              lastMessagePreview:
+                incoming.content ?? "(đính kèm)",
+              lastMessageAt: incoming.createdAt,
+            }
+          : conv,
+      );
+      queryClient.setQueryData(CHAT_QUERY_KEYS.CONVERSATIONS, refreshed);
     };
 
     const handleConversationUpdated = async (
