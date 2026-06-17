@@ -8,7 +8,11 @@ import {
   sendChatMessage,
   CHAT_QUERY_KEYS,
 } from "./api";
-import type { CreateConversationDto, SendMessagePayloadDto } from "./dtos";
+import type {
+  CreateConversationDto,
+  MessageResponseDto,
+  SendMessagePayloadDto,
+} from "./dtos";
 
 export const useConversationsQuery = () =>
   useQuery({
@@ -39,18 +43,15 @@ export const useOperatorDirectoryQuery = () =>
 export const useSendMessageMutation = (conversationId: number) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (payload: SendMessagePayloadDto) =>
-      sendChatMessage(payload),
+    mutationFn: (payload: SendMessagePayloadDto) => sendChatMessage(payload),
     onSuccess: (message) => {
       queryClient.setQueryData(
         CHAT_QUERY_KEYS.MESSAGES(conversationId),
         (current: unknown) => {
-          const messages = current as
-            | { data?: Array<{ id: number }> }
-            | undefined;
-          const list = messages?.data ?? [];
+          const messages = current as MessageResponseDto[] | undefined;
+          const list = messages ?? [];
           if (list.some((m) => m.id === message.id)) return messages;
-          return { data: [...list, message] };
+          return [...list, message];
         },
       );
       void queryClient.invalidateQueries({

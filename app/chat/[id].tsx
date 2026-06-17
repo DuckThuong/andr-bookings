@@ -64,7 +64,7 @@ export default function ChatDetailScreen() {
   const messagesQuery = useConversationMessagesQuery(conversationId);
   const sendMutation = useSendMessageMutation(conversationId);
 
-  const messages = sortMessagesAsc(messagesQuery.data?.data ?? []);
+  const messages = sortMessagesAsc(messagesQuery.data ?? []);
 
   useEffect(() => {
     setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 80);
