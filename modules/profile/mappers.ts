@@ -1,7 +1,4 @@
-import {
-  PICKUP_OPTIONS,
-  DROPOFF_OPTIONS,
-} from "@/modules/profile/constants";
+import { PICKUP_OPTIONS, DROPOFF_OPTIONS } from "@/modules/profile/constants";
 import type {
   AccountBookingDetail,
   AccountBookingItem,
@@ -27,7 +24,9 @@ const resolvePointLabel = (
   return options.find((item) => item.value === value)?.label ?? value;
 };
 
-const formatSeatLabel = (item: AccountBookingItem | AccountBookingDetail): string => {
+const formatSeatLabel = (
+  item: AccountBookingItem | AccountBookingDetail,
+): string => {
   const detail = item as AccountBookingDetail;
 
   if (detail.seats?.length) {
@@ -42,6 +41,7 @@ const formatSeatLabel = (item: AccountBookingItem | AccountBookingDetail): strin
 export const mapBookingStatus = (
   item: AccountBookingItem,
   ticketStatus?: string | null,
+  holdExpiresAt?: string | null,
 ): ProfileBookingStatus => {
   const status = item.status?.toUpperCase() ?? "";
   const ticket = ticketStatus?.toUpperCase() ?? "";
@@ -52,6 +52,13 @@ export const mapBookingStatus = (
     ticket === "REFUNDED"
   ) {
     return "Đã hủy";
+  }
+
+  // Check if HOLD booking has expired
+  if (status === "HOLD" && holdExpiresAt) {
+    if (new Date() > new Date(holdExpiresAt)) {
+      return "Đã hủy";
+    }
   }
 
   if (status === "HOLD") return "Chưa thanh toán";
@@ -102,10 +109,8 @@ export const mapAccountBookingToProfile = (
     pickupValue: passenger?.pickupPoint ?? "",
     dropoffValue: passenger?.dropoffPoint ?? "",
     paymentMethod:
-      PAYMENT_LABELS[item.paymentMethodId ?? ""] ??
-      item.paymentMethodId ??
-      "—",
-    status: mapBookingStatus(item, ticket?.status ?? null),
+      PAYMENT_LABELS[item.paymentMethodId ?? ""] ?? item.paymentMethodId ?? "—",
+    status: mapBookingStatus(item, ticket?.status ?? null, item.holdExpiresAt),
     bookingCode: ticket?.code ?? item.code,
     contactPhone: passenger?.phone ?? "",
     contactEmail,
@@ -117,7 +122,9 @@ export const mapAccountBookingToProfile = (
   };
 };
 
-export const toPassengerPayload = (booking: ProfileBooking): PassengerPayload => ({
+export const toPassengerPayload = (
+  booking: ProfileBooking,
+): PassengerPayload => ({
   fullName: booking.passengerName,
   phone: booking.contactPhone.replace(/\D/g, "").slice(-10),
   pickupPoint: booking.pickupValue,
@@ -141,7 +148,9 @@ export const getTrackingProgress = (status: ProfileBookingStatus): number => {
   }
 };
 
-export const buildTrackingSteps = (status: ProfileBookingStatus): TrackingStep[] => {
+export const buildTrackingSteps = (
+  status: ProfileBookingStatus,
+): TrackingStep[] => {
   const progress = getTrackingProgress(status);
   const labels = [
     "Đã đặt vé",
