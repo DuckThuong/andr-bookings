@@ -264,8 +264,6 @@ export type PaymentMethod = {
 };
 
 export const DEFAULT_PAYMENT_METHODS: PaymentMethod[] = [
-  { id: "card", label: "Thẻ ATM / Internet Banking", icon: "credit-card" },
-  { id: "momo", label: "Ví MoMo", icon: "wallet" },
-  { id: "zalo", label: "ZaloPay", icon: "wallet" },
-  { id: "vnpay", label: "VNPay", icon: "credit-card" },
+  { id: "payos", label: "PayOS (VietQR)", icon: "qr-code" },
+  { id: "cash", label: "Tiền mặt", icon: "cash" },
 ];

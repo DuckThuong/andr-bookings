@@ -39,6 +39,10 @@ export default function RootLayout() {
             <Stack.Screen name="booking" />
             <Stack.Screen name="chat" />
             <Stack.Screen name="company-registration" />
+            <Stack.Screen name="payment" />
+            <Stack.Screen name="notifications" />
+            <Stack.Screen name="promos" />
+            <Stack.Screen name="support" />
           </Stack>
         </AppProviders>
       </SafeAreaProvider>

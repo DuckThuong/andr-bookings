@@ -5,6 +5,7 @@ import {
   createHold,
   getBooking,
   getBookingByPaymentLink,
+  getPaymentStatus,
   getSeatSelection,
   updateHoldPassenger,
   validatePromo,
@@ -81,5 +82,14 @@ export function useBookingByPaymentLinkQuery(paymentLinkId: string | undefined) 
     queryKey: ["booking-by-payment", paymentLinkId],
     queryFn: () => getBookingByPaymentLink(paymentLinkId!),
     enabled: Boolean(paymentLinkId),
+  });
+}
+
+export function usePaymentStatusQuery(paymentLinkId: string | undefined) {
+  return useQuery({
+    queryKey: ["payment-status", paymentLinkId],
+    queryFn: () => getPaymentStatus(paymentLinkId!),
+    enabled: Boolean(paymentLinkId),
+    retry: 1,
   });
 }

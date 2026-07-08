@@ -16,4 +16,13 @@ export type BookingByPaymentLinkResponse = {
   amount: number;
   paymentMethod?: string;
   paidAt?: string;
+  passengerPhone?: string;
+};
+
+export type PaymentStatusResponse = {
+  status: PaymentStatus;
+  paymentLinkId: string;
+  amount: number;
+  paidAt?: string;
+  cancelledAt?: string;
 };

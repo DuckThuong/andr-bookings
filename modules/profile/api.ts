@@ -5,8 +5,16 @@ import type {
   AccountPaginated,
   AccountBookingItem,
   PassengerPayload,
+  RefundRequestPayload,
+  RefundRequestResponse,
   UpdateUserProfilePayload,
   UserProfile,
+  PaymentInvoice,
+  RefundInvoice,
+  InvoicePaginated,
+  InvoiceSummary,
+  InvoiceQuery,
+  RefundQuery,
 } from "@/modules/profile/types";
 
 export async function getProfile(): Promise<UserProfile> {
@@ -45,6 +53,46 @@ export async function updateHoldPassenger(
   const response = await axiosClient.patch(
     `/api/bookings/hold/${holdCode}/passenger`,
     passenger,
+  );
+  return response.data;
+}
+
+// ==================== INVOICE / PAYMENT HISTORY API ====================
+
+export async function getPaymentInvoices(
+  params?: InvoiceQuery,
+): Promise<InvoicePaginated<PaymentInvoice>> {
+  const response = await axiosClient.get<InvoicePaginated<PaymentInvoice>>(
+    "/client/invoices/payments",
+    { params },
+  );
+  return response.data;
+}
+
+export async function getRefundInvoices(
+  params?: RefundQuery,
+): Promise<InvoicePaginated<RefundInvoice>> {
+  const response = await axiosClient.get<InvoicePaginated<RefundInvoice>>(
+    "/client/invoices/refunds",
+    { params },
+  );
+  return response.data;
+}
+
+export async function getInvoiceSummary(): Promise<InvoiceSummary> {
+  const response = await axiosClient.get<InvoiceSummary>("/client/invoices/summary");
+  return response.data;
+}
+
+// ==================== REFUND REQUEST API ====================
+
+export async function requestRefund(
+  bookingId: number,
+  payload?: RefundRequestPayload,
+): Promise<RefundRequestResponse> {
+  const response = await axiosClient.post<RefundRequestResponse>(
+    `/client/account/bookings/${bookingId}/refund`,
+    payload ?? {},
   );
   return response.data;
 }

@@ -3,14 +3,21 @@ import {
   getMyBooking,
   getProfile,
   listMyBookings,
+  requestRefund,
   updateHoldPassenger,
   updateProfile,
+  getPaymentInvoices,
+  getRefundInvoices,
+  getInvoiceSummary,
 } from "@/modules/profile/api";
 import { mapAccountBookingToProfile } from "@/modules/profile/mappers";
 import type {
   PassengerPayload,
   ProfileBooking,
+  RefundRequestPayload,
   UpdateUserProfilePayload,
+  InvoiceQuery,
+  RefundQuery,
 } from "@/modules/profile/types";
 
 export function useProfileQuery() {
@@ -79,4 +86,46 @@ export function mergeBookingUpdate(
     pickupPoint: values.pickupValue ?? booking.pickupValue,
     dropoffPoint: values.dropoffValue ?? booking.dropoffValue,
   };
+}
+
+// ==================== INVOICE / PAYMENT HISTORY HOOKS ====================
+
+export function useInvoiceSummaryQuery() {
+  return useQuery({
+    queryKey: ["invoiceSummary"],
+    queryFn: getInvoiceSummary,
+  });
+}
+
+export function usePaymentInvoicesQuery(params?: InvoiceQuery) {
+  return useQuery({
+    queryKey: ["paymentInvoices", params],
+    queryFn: () => getPaymentInvoices(params),
+  });
+}
+
+export function useRefundInvoicesQuery(params?: RefundQuery) {
+  return useQuery({
+    queryKey: ["refundInvoices", params],
+    queryFn: () => getRefundInvoices(params),
+  });
+}
+
+export function useRequestRefundMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      bookingId,
+      payload,
+    }: {
+      bookingId: number;
+      payload?: RefundRequestPayload;
+    }) => requestRefund(bookingId, payload),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["myBookings"] });
+      void queryClient.invalidateQueries({ queryKey: ["myBooking"] });
+      void queryClient.invalidateQueries({ queryKey: ["refundInvoices"] });
+    },
+  });
 }

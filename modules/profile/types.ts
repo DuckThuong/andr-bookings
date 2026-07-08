@@ -156,3 +156,104 @@ export type TrackingStep = {
   done: boolean;
   active: boolean;
 };
+
+// ==================== INVOICE / PAYMENT HISTORY TYPES ====================
+
+export type PaymentInvoiceTrip = {
+  departure?: string;
+  arrival?: string;
+  name?: string;
+  date?: string;
+  time?: string;
+};
+
+export type PaymentInvoiceCompany = {
+  code: string;
+  companyName: string;
+};
+
+export type PaymentInvoiceTicket = {
+  id: number;
+  code: string;
+  totalSeat: number;
+};
+
+export type PaymentInvoice = {
+  id: number;
+  code: string;
+  amount: number;
+  method: string;
+  methodDisplay: string;
+  status: string;
+  paidAt: string | null;
+  transactionRef: string | null;
+  createdAt: string;
+  trip?: PaymentInvoiceTrip | null;
+  company?: PaymentInvoiceCompany | null;
+  ticket?: PaymentInvoiceTicket | null;
+};
+
+export type RefundInvoicePayment = {
+  code: string;
+  amount: number;
+  method: string;
+  methodDisplay: string;
+};
+
+export type RefundInvoice = {
+  id: number;
+  code: string;
+  amount: number;
+  reason: string | null;
+  status: string;
+  refundedAt: string | null;
+  createdAt: string;
+  trip?: PaymentInvoiceTrip | null;
+  company?: PaymentInvoiceCompany | null;
+  payment?: RefundInvoicePayment | null;
+};
+
+export type InvoicePaginated<T> = {
+  items: T[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+};
+
+export type InvoiceSummary = {
+  totalSpent: number;
+  totalPayments: number;
+  pendingRefunds: number;
+};
+
+export type InvoiceQuery = {
+  page?: number;
+  limit?: number;
+  status?: string;
+  method?: string;
+  fromDate?: string;
+  toDate?: string;
+};
+
+export type RefundQuery = {
+  page?: number;
+  limit?: number;
+  status?: string;
+  fromDate?: string;
+  toDate?: string;
+};
+
+// ==================== REFUND REQUEST TYPES ====================
+
+export type RefundRequestPayload = {
+  reason?: string;
+};
+
+export type RefundRequestResponse = {
+  success: boolean;
+  message: string;
+  refundCode?: string;
+  estimatedRefundAmount?: number;
+  refundPercentage?: number;
+};

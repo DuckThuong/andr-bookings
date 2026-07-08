@@ -13,6 +13,7 @@ import type {
 import type {
   BookingByPaymentLinkResponse,
   PaymentLinkResponse,
+  PaymentStatusResponse,
 } from "./payment.types";
 
 export async function getSeatSelection(
@@ -92,6 +93,15 @@ export async function getBookingByPaymentLink(
 ): Promise<BookingByPaymentLinkResponse> {
   const response = await axiosClient.get<BookingByPaymentLinkResponse>(
     `/api/bookings/by-payment/${paymentLinkId}`,
+  );
+  return response.data;
+}
+
+export async function getPaymentStatus(
+  paymentLinkId: string,
+): Promise<PaymentStatusResponse> {
+  const response = await axiosClient.get<PaymentStatusResponse>(
+    `/api/payments/payos/status/${paymentLinkId}`,
   );
   return response.data;
 }
