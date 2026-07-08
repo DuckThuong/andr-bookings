@@ -10,6 +10,10 @@ import type {
   ValidatePromoPayload,
   ValidatePromoResponse,
 } from "./types";
+import type {
+  BookingByPaymentLinkResponse,
+  PaymentLinkResponse,
+} from "./payment.types";
 
 export async function getSeatSelection(
   tripId: string,
@@ -69,6 +73,25 @@ export async function getBooking(
 ): Promise<BookingSuccessResponse> {
   const response = await axiosClient.get<BookingSuccessResponse>(
     `/api/bookings/${bookingId}`,
+  );
+  return response.data;
+}
+
+// PayOS Payment APIs
+export async function createBookingPaymentLink(
+  holdId: string,
+): Promise<PaymentLinkResponse> {
+  const response = await axiosClient.post<PaymentLinkResponse>(
+    `/api/bookings/hold/${holdId}/payment-link`,
+  );
+  return response.data;
+}
+
+export async function getBookingByPaymentLink(
+  paymentLinkId: string,
+): Promise<BookingByPaymentLinkResponse> {
+  const response = await axiosClient.get<BookingByPaymentLinkResponse>(
+    `/api/bookings/by-payment/${paymentLinkId}`,
   );
   return response.data;
 }

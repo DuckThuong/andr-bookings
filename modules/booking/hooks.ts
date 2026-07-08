@@ -1,8 +1,10 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   confirmPayment,
+  createBookingPaymentLink,
   createHold,
   getBooking,
+  getBookingByPaymentLink,
   getSeatSelection,
   updateHoldPassenger,
   validatePromo,
@@ -64,5 +66,20 @@ export function useBookingQuery(bookingId: string | undefined) {
     queryKey: ["booking", bookingId],
     queryFn: () => getBooking(bookingId!),
     enabled: Boolean(bookingId),
+  });
+}
+
+// PayOS Payment Hooks
+export function useCreateBookingPaymentLinkMutation() {
+  return useMutation({
+    mutationFn: (holdId: string) => createBookingPaymentLink(holdId),
+  });
+}
+
+export function useBookingByPaymentLinkQuery(paymentLinkId: string | undefined) {
+  return useQuery({
+    queryKey: ["booking-by-payment", paymentLinkId],
+    queryFn: () => getBookingByPaymentLink(paymentLinkId!),
+    enabled: Boolean(paymentLinkId),
   });
 }
