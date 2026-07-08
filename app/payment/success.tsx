@@ -163,7 +163,7 @@ export default function PaymentSuccessScreen() {
   return (
     <SafeAreaView className="flex-1 bg-background_color">
       <ScrollView
-        contentContainerStyle="px-5 pt-10 pb-10"
+        contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 40, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}

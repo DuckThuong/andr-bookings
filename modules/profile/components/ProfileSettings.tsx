@@ -1,6 +1,6 @@
 import { ReactNode, useState } from "react";
 import { Switch, Text, View, Pressable } from "react-native";
-import { Link } from "expo-router";
+import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { AppButton } from "@/shared/components";
 
@@ -81,14 +81,52 @@ export function ProfileSettings({ onSignOut }: ProfileSettingsProps) {
       </SettingsGroup>
 
       <View className="rounded-[28px] bg-white_color px-4 py-5">
+        {/* Quick links */}
+        <View className="mb-4 flex-row items-center justify-between">
+          <Text className="font-semibold text-base text-primary_color">
+            Liên kết nhanh
+          </Text>
+        </View>
+        
+        <Pressable
+          className="mb-3 flex-row items-center justify-between rounded-[16px] bg-background_color px-4 py-4"
+          onPress={() => router.push("/profile/payment-history")}
+        >
+          <View className="flex-row items-center gap-3">
+            <View className="h-10 w-10 items-center justify-center rounded-full bg-[#dbeafe]">
+              <Ionicons name="receipt-outline" size={20} color="#3b82f6" />
+            </View>
+            <Text className="font-medium text-base text-primary_color">
+              Hóa đơn thanh toán
+            </Text>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
+        </Pressable>
+
+        <Pressable
+          className="mb-4 flex-row items-center justify-between rounded-[16px] bg-background_color px-4 py-4"
+          onPress={() => router.push("/profile/refund-history")}
+        >
+          <View className="flex-row items-center gap-3">
+            <View className="h-10 w-10 items-center justify-center rounded-full bg-[#fef3c7]">
+              <Ionicons name="refresh-circle-outline" size={20} color="#d97706" />
+            </View>
+            <Text className="font-medium text-base text-primary_color">
+              Hóa đơn hoàn tiền
+            </Text>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
+        </Pressable>
+
         <AppButton label="Lưu cài đặt" onPress={() => undefined} />
         <View className="mt-3">
-          <Link href="/company-registration" asChild>
-            <Pressable className="mb-3 flex-row items-center justify-center rounded-full border border-primary_color py-3">
-              <Ionicons name="business" size={18} color="#f97316" />
-              <Text className="ml-2 font-semibold text-primary_color">Đăng ký nhà xe</Text>
-            </Pressable>
-          </Link>
+          <Pressable
+            className="mb-3 flex-row items-center justify-center rounded-full border border-primary_color py-3"
+            onPress={() => router.push("/company-registration")}
+          >
+            <Ionicons name="business" size={18} color="#f97316" />
+            <Text className="ml-2 font-semibold text-primary_color">Đăng ký nhà xe</Text>
+          </Pressable>
         </View>
         <View className="mt-1">
           <AppButton label="Đăng xuất" onPress={onSignOut} variant="secondary" />

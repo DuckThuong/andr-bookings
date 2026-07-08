@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React from "react";
+import { View, Text } from "react-native";
 
 const TabLayout = () => {
   return (
@@ -33,11 +34,13 @@ const TabLayout = () => {
             color: string;
             focused: boolean;
           }) => (
-            <Ionicons
-              color={color}
-              name={focused ? "home" : "home-outline"}
-              size={24}
-            />
+            <View>
+              <Ionicons
+                color={color}
+                name={focused ? "home" : "home-outline"}
+                size={24}
+              />
+            </View>
           ),
           tabBarLabel: "Trang chủ",
         }}

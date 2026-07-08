@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
 import { useHomeSections } from "@/modules/home";
 import { AppButton, StateBlock } from "@/shared/components";
 import { getApiErrorMessage } from "@/shared/utils/api";
@@ -84,6 +85,24 @@ export default function HomeTab() {
               onPress={() => router.push("/(tabs)/search" as never)}
             />
           </View>
+
+          {/* Quick links */}
+          <View className="mt-4 flex-row gap-3">
+            <Pressable
+              className="flex-1 flex-row items-center gap-2 rounded-[16px] bg-white/10 px-4 py-3"
+              onPress={() => router.push("/promos")}
+            >
+              <Ionicons name="pricetag-outline" size={20} color="#f5a623" />
+              <Text className="text-sm font-medium text-white_color">Khuyến mãi</Text>
+            </Pressable>
+            <Pressable
+              className="flex-1 flex-row items-center gap-2 rounded-[16px] bg-white/10 px-4 py-3"
+              onPress={() => router.push("/support")}
+            >
+              <Ionicons name="help-circle-outline" size={20} color="#f5a623" />
+              <Text className="text-sm font-medium text-white_color">Hỗ trợ</Text>
+            </Pressable>
+          </View>
         </View>
 
         {isLoading ? (
@@ -137,7 +156,11 @@ export default function HomeTab() {
               />
             )}
 
-            <SectionTitle title="Ưu đãi" />
+            <SectionTitle
+              actionLabel="Xem thêm"
+              onPress={() => router.push("/promos")}
+              title="Ưu đãi"
+            />
             {promos.length ? (
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View className="flex-row gap-3">

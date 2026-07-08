@@ -8,7 +8,7 @@ import {
   Linking,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector/icons";
+import { Ionicons } from "@expo/vector-icons";
 
 type Faq = {
   id: string;
@@ -136,7 +136,7 @@ export default function SupportScreen() {
 
       <ScrollView
         className="mt-4 flex-1"
-        contentContainerStyle="px-5 pb-10"
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >
         {/* FAQs */}

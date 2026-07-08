@@ -129,7 +129,7 @@ export default function PromosScreen() {
       {/* Promo list */}
       <ScrollView
         className="mt-4 flex-1"
-        contentContainerStyle="px-5 pb-10"
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >
         {promos.map((promo) => (
