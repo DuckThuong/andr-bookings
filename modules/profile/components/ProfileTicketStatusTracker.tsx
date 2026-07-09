@@ -1,6 +1,7 @@
 import { Pressable, Text, View } from "react-native";
 import { ProfileStatusBadge } from "@/modules/profile/components/ProfileStatusBadge";
-import type { ProfileBooking, ProfileBookingStatus } from "@/modules/profile/types";
+import type { ProfileBooking } from "@/modules/profile/types";
+import { useBookingStatuses } from "@/modules/profile/useBookingStatuses";
 
 type ProfileTicketStatusTrackerProps = {
   booking: ProfileBooking;
@@ -14,10 +15,10 @@ type TrackerStep = {
   icon: string;
 };
 
-const APPROVED_STATUSES: ProfileBookingStatus[] = ["Đã xác nhận", "Chờ khởi hành"];
+const APPROVED_STATUSES: string[] = ["CONFIRMED", "WAITING"];
 
-const STEP_BY_STATUS: Record<ProfileBookingStatus, TrackerStep[]> = {
-  "Đã xác nhận": [
+const STEP_BY_STATUS: Record<string, TrackerStep[]> = {
+  "CONFIRMED": [
     {
       key: "approved",
       label: "Nhà xe đã duyệt vé",
@@ -37,7 +38,7 @@ const STEP_BY_STATUS: Record<ProfileBookingStatus, TrackerStep[]> = {
       icon: "→",
     },
   ],
-  "Chờ khởi hành": [
+  "WAITING": [
     {
       key: "approved",
       label: "Nhà xe đã duyệt vé",
@@ -57,29 +58,29 @@ const STEP_BY_STATUS: Record<ProfileBookingStatus, TrackerStep[]> = {
       icon: "→",
     },
   ],
-  "Chờ xác nhận": [],
-  "Chưa thanh toán": [],
-  "Đã hủy": [],
 };
 
-const ACTIVE_STEP_INDEX: Record<ProfileBookingStatus, number> = {
-  "Đã xác nhận": 1,
-  "Chờ khởi hành": 2,
-  "Chờ xác nhận": 0,
-  "Chưa thanh toán": 0,
-  "Đã hủy": 0,
+const ACTIVE_STEP_INDEX: Record<string, number> = {
+  "CONFIRMED": 1,
+  "WAITING": 2,
+  "PENDING": 0,
+  "UNPAID": 0,
+  "CANCELLED": 0,
 };
 
 export function ProfileTicketStatusTracker({
   booking,
   onContactOperator,
 }: ProfileTicketStatusTrackerProps) {
+  const { getBookingStatusMeta } = useBookingStatuses();
+  const statusMeta = getBookingStatusMeta(booking.status);
+
   if (!APPROVED_STATUSES.includes(booking.status)) {
     return null;
   }
 
-  const steps = STEP_BY_STATUS[booking.status];
-  const activeIndex = ACTIVE_STEP_INDEX[booking.status];
+  const steps = STEP_BY_STATUS[booking.status] || [];
+  const activeIndex = ACTIVE_STEP_INDEX[booking.status] ?? 0;
   const canContact = booking.operatorCode && booking.operatorName;
 
   return (
@@ -90,7 +91,7 @@ export function ProfileTicketStatusTracker({
             Theo dõi tình trạng vé
           </Text>
           <Text className="mt-1 font-semibold text-base text-primary_color">
-            {booking.status === "Đã xác nhận"
+            {booking.status === "CONFIRMED"
               ? "Vé đã được duyệt"
               : "Sẵn sàng khởi hành"}
           </Text>

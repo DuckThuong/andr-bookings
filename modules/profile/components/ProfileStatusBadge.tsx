@@ -1,9 +1,10 @@
 import { Text, View } from "react-native";
-import { STATUS_COLORS } from "@/modules/profile/constants";
-import type { ProfileBookingStatus } from "@/modules/profile/types";
+import { useBookingStatuses } from "@/modules/profile/useBookingStatuses";
 
-export function ProfileStatusBadge({ status }: { status: ProfileBookingStatus }) {
-  const colors = STATUS_COLORS[status];
+export function ProfileStatusBadge({ status }: { status: string }) {
+  const { getBookingStatusMeta } = useBookingStatuses();
+  const meta = getBookingStatusMeta(status);
+  const colors = meta ?? { bg: "#f1f5f9", color: "#64748b", label: status };
 
   return (
     <View
@@ -11,7 +12,7 @@ export function ProfileStatusBadge({ status }: { status: ProfileBookingStatus })
       style={{ backgroundColor: colors.bg }}
     >
       <Text className="font-medium text-xs" style={{ color: colors.color }}>
-        {status}
+        {colors.label}
       </Text>
     </View>
   );

@@ -1,4 +1,4 @@
-import type { ProfileBookingStatus, ProfileTabKey } from "@/modules/profile/types";
+import type { ProfileTabKey } from "@/modules/profile/types";
 
 export const PROFILE_TABS: Array<{ key: ProfileTabKey; label: string }> = [
   { key: "overview", label: "Tổng quan" },
@@ -7,17 +7,6 @@ export const PROFILE_TABS: Array<{ key: ProfileTabKey; label: string }> = [
   { key: "tracking", label: "Theo dõi" },
   { key: "settings", label: "Cài đặt" },
 ];
-
-export const STATUS_COLORS: Record<
-  ProfileBookingStatus,
-  { color: string; bg: string }
-> = {
-  "Đã xác nhận": { color: "#15803d", bg: "#dcfce7" },
-  "Chờ khởi hành": { color: "#854d0e", bg: "#fef9c3" },
-  "Chờ xác nhận": { color: "#1d4ed8", bg: "#dbeafe" },
-  "Chưa thanh toán": { color: "#9a3412", bg: "#ffedd5" },
-  "Đã hủy": { color: "#991b1b", bg: "#fee2e2" },
-};
 
 export const PICKUP_OPTIONS = [
   { value: "mydinh", label: "Bến xe Mỹ Đình" },
@@ -39,8 +28,8 @@ export const TRACKING_STEP_LABELS = [
   "Hoàn thành",
 ] as const;
 
-export const ACTIVE_TRACKING_STATUSES: ProfileBookingStatus[] = [
-  "Chờ khởi hành",
-  "Đã xác nhận",
-  "Chờ xác nhận",
+export const ACTIVE_TRACKING_STATUSES: string[] = [
+  "WAITING",
+  "CONFIRMED",
+  "PENDING",
 ];

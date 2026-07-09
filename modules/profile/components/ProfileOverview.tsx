@@ -29,9 +29,9 @@ export function ProfileOverview({
   const initials = user?.userName?.trim().charAt(0).toUpperCase() || "K";
   const activeTrips = bookings.filter(
     (booking) =>
-      booking.status === "Chờ khởi hành" ||
-      booking.status === "Đã xác nhận" ||
-      booking.status === "Chờ xác nhận",
+      booking.status === "WAITING" ||
+      booking.status === "CONFIRMED" ||
+      booking.status === "PENDING",
   );
   const recentTrips = bookings.slice(0, 2);
   const rank = user?.rank ?? "Chưa xếp hạng";

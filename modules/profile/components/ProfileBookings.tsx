@@ -163,13 +163,13 @@ export function ProfileBookings({
                     }
                   />
                 </View>
-              ) : selectedBooking.status === "Đã xác nhận" ||
-                selectedBooking.status === "Chờ khởi hành" ? null : (
+              ) : selectedBooking.status === "CONFIRMED" ||
+                selectedBooking.status === "WAITING" ? null : (
                 <View className="mt-4 rounded-[16px] bg-[#fef9c3] px-4 py-3">
                   <Text className="text-sm text-[#854d0e]">
-                    {selectedBooking.status === "Chờ xác nhận"
+                    {selectedBooking.status === "PENDING"
                       ? "Đơn đang chờ nhà xe xác nhận — không thể chỉnh sửa."
-                      : selectedBooking.status === "Đã hủy"
+                      : selectedBooking.status === "CANCELLED"
                         ? "Đơn đặt vé đã bị hủy — không thể chỉnh sửa."
                         : "Chỉ có thể chỉnh sửa khi đơn đang giữ chỗ và chưa hết hạn."}
                   </Text>

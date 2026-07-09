@@ -42,7 +42,7 @@ export const mapBookingStatus = (
   item: AccountBookingItem,
   ticketStatus?: string | null,
   holdExpiresAt?: string | null,
-): ProfileBookingStatus => {
+): string => {
   const status = item.status?.toUpperCase() ?? "";
   const ticket = ticketStatus?.toUpperCase() ?? "";
 
@@ -51,29 +51,29 @@ export const mapBookingStatus = (
     ticket === "CANCELLED" ||
     ticket === "REFUNDED"
   ) {
-    return "Đã hủy";
+    return "CANCELLED";
   }
 
   // Check if HOLD booking has expired
   if (status === "HOLD" && holdExpiresAt) {
     if (new Date() > new Date(holdExpiresAt)) {
-      return "Đã hủy";
+      return "CANCELLED";
     }
   }
 
-  if (status === "HOLD") return "Chưa thanh toán";
-  if (status === "CONFIRMED") return "Đã xác nhận";
+  if (status === "HOLD") return "UNPAID";
+  if (status === "CONFIRMED") return "CONFIRMED";
 
   if (
     status === "PENDING_APPROVAL" ||
     (status === "CONVERTED" && ticket === "PENDING")
   ) {
-    return "Chờ xác nhận";
+    return "PENDING";
   }
 
-  if (status === "CONVERTED" && ticket === "PAID") return "Chờ khởi hành";
+  if (status === "CONVERTED" && ticket === "PAID") return "WAITING";
 
-  return "Chưa thanh toán";
+  return "UNPAID";
 };
 
 const canEditBooking = (item: AccountBookingItem): boolean => {
@@ -131,17 +131,17 @@ export const toPassengerPayload = (
   dropoffPoint: booking.dropoffValue,
 });
 
-export const getTrackingProgress = (status: ProfileBookingStatus): number => {
+export const getTrackingProgress = (status: string): number => {
   switch (status) {
-    case "Chưa thanh toán":
+    case "UNPAID":
       return 20;
-    case "Chờ xác nhận":
+    case "PENDING":
       return 40;
-    case "Đã xác nhận":
+    case "CONFIRMED":
       return 60;
-    case "Chờ khởi hành":
+    case "WAITING":
       return 80;
-    case "Đã hủy":
+    case "CANCELLED":
       return 0;
     default:
       return 0;
@@ -149,7 +149,7 @@ export const getTrackingProgress = (status: ProfileBookingStatus): number => {
 };
 
 export const buildTrackingSteps = (
-  status: ProfileBookingStatus,
+  status: string,
 ): TrackingStep[] => {
   const progress = getTrackingProgress(status);
   const labels = [
@@ -170,8 +170,8 @@ export const buildTrackingSteps = (
     return {
       key: `step-${index}`,
       label,
-      done: status === "Đã hủy" ? false : done,
-      active: status === "Đã hủy" ? false : active && !done,
+      done: status === "CANCELLED" ? false : done,
+      active: status === "CANCELLED" ? false : active && !done,
     };
   });
 };

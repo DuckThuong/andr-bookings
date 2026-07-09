@@ -5,12 +5,7 @@ export type ProfileTabKey =
   | "tracking"
   | "settings";
 
-export type ProfileBookingStatus =
-  | "Đã xác nhận"
-  | "Chờ khởi hành"
-  | "Chờ xác nhận"
-  | "Chưa thanh toán"
-  | "Đã hủy";
+export type ProfileBookingStatus = string;
 
 export type UserProfile = {
   id: number;
