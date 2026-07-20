@@ -19,9 +19,8 @@ import type {
 import { AppButton } from "@/shared/components";
 
 const PAYMENT_METHODS: PaymentMethod[] = [
-  { id: "card", label: "Thẻ ATM / Internet Banking", icon: "card" },
-  { id: "momo", label: "Ví MoMo", icon: "wallet" },
-  { id: "zalo", label: "ZaloPay", icon: "wallet" },
+  { id: "payos", label: "PayOS", icon: "card" },
+  { id: "cash", label: "Tiền mặt", icon: "wallet" },
 ];
 
 export default function BookingConfirmScreen() {

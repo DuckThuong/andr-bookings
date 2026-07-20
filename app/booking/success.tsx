@@ -101,7 +101,7 @@ export default function BookingSuccessScreen() {
 
       <ScrollView contentContainerStyle={{ padding: 16, gap: 16 }}>
         {/* Success Hero */}
-        <View className="items-center rounded-3xl bg-gradient-to-br from-green-500 to-green-600 p-6">
+        <View className="items-center rounded-3xl p-6 bg-green-500" >
           <View className="mb-4 h-20 w-20 items-center justify-center rounded-full bg-white/20">
             <Ionicons
               name={isPending ? "time" : "checkmark-circle"}

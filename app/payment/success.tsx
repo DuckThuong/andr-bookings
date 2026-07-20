@@ -73,8 +73,6 @@ export default function PaymentSuccessScreen() {
   };
 
   const handleDownloadTicket = () => {
-    // TODO: Implement PDF download
-    console.log("Download ticket");
   };
 
   if (!paymentLinkId) {

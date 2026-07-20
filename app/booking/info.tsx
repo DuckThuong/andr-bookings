@@ -27,13 +27,6 @@ export default function BookingInfoScreen() {
     pageData?: string;
   }>();
 
-  const [fullName, setFullName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [pickupPoint, setPickupPoint] = useState("");
-  const [dropoffPoint, setDropoffPoint] = useState("");
-
-  const updateMutation = useUpdatePassengerMutation();
-
   const seats: BookingSuccessSeat[] = params.seats
     ? JSON.parse(params.seats)
     : [];
@@ -45,6 +38,17 @@ export default function BookingInfoScreen() {
 
   const trip = pageData?.trip || {};
   const passenger = pageData?.passenger || {};
+
+  const [fullName, setFullName] = useState(passenger.fullName || "");
+  const [phone, setPhone] = useState(passenger.phone || "");
+  const [pickupPoint, setPickupPoint] = useState(
+    passenger.pickupPointDefault || passenger.pickupPoint || ""
+  );
+  const [dropoffPoint, setDropoffPoint] = useState(
+    passenger.dropoffPointDefault || passenger.dropoffPoint || ""
+  );
+
+  const updateMutation = useUpdatePassengerMutation();
 
   const handleContinue = async () => {
     if (!params.holdId) return;
@@ -189,58 +193,24 @@ export default function BookingInfoScreen() {
             <Text className="mb-2 text-sm font-medium text-gray-600">
               Điểm lên xe
             </Text>
-            <View className="flex-row gap-2">
-              {(passenger.pickupPointOptions || []).map((opt: any) => (
-                <Pressable
-                  key={opt.value}
-                  className={`flex-1 rounded-xl border-2 p-3 ${
-                    pickupPoint === opt.value
-                      ? "border-secondary_color bg-orange-50"
-                      : "border-gray-200 bg-gray-50"
-                  }`}
-                  onPress={() => setPickupPoint(opt.value)}
-                >
-                  <Text
-                    className={`text-center text-sm ${
-                      pickupPoint === opt.value
-                        ? "font-medium text-secondary_color"
-                        : "text-gray-600"
-                    }`}
-                  >
-                    {opt.label}
-                  </Text>
-                </Pressable>
-              ))}
-            </View>
+            <TextInput
+              className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3"
+              placeholder="Nhập điểm lên xe"
+              value={pickupPoint}
+              onChangeText={setPickupPoint}
+            />
           </View>
 
           <View className="mb-4">
             <Text className="mb-2 text-sm font-medium text-gray-600">
               Điểm xuống xe
             </Text>
-            <View className="flex-row flex-wrap gap-2">
-              {(passenger.dropoffPointOptions || []).map((opt: any) => (
-                <Pressable
-                  key={opt.value}
-                  className={`rounded-xl border-2 px-4 py-3 ${
-                    dropoffPoint === opt.value
-                      ? "border-secondary_color bg-orange-50"
-                      : "border-gray-200 bg-gray-50"
-                  }`}
-                  onPress={() => setDropoffPoint(opt.value)}
-                >
-                  <Text
-                    className={`text-sm ${
-                      dropoffPoint === opt.value
-                        ? "font-medium text-secondary_color"
-                        : "text-gray-600"
-                    }`}
-                  >
-                    {opt.label}
-                  </Text>
-                </Pressable>
-              ))}
-            </View>
+            <TextInput
+              className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3"
+              placeholder="Nhập điểm xuống xe"
+              value={dropoffPoint}
+              onChangeText={setDropoffPoint}
+            />
           </View>
         </View>
 
